@@ -1,3 +1,6 @@
+1.4.3:
+- Add checks for common existing site hosting directories
+
 1.4.2:
 - Added colors for [INFO] output.
 

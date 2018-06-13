@@ -4,7 +4,7 @@ if 0;
 #!/usr/bin/perl
 ###############################
 ##  cPanel Preinstall Check  ##
-##  Version 1.4.2            ##
+##  Version 1.4.3            ##
 ##  By: Matthew Vetter       ##
 ###############################
 
@@ -81,8 +81,8 @@ if ( $install == 1 ) {
 }
 
 print "cPanel Preinstall Check\n";
-print "[Version] 1.4.2\n";
-print "[Updated] June 5 2018\n";
+print "[Version] 1.4.3\n";
+print "[Updated] June 13 2018\n";
 print "${cyan}[INFO] * This script has been deprecated and updates may no longer occur. Please utilize the cPanel Installer.${NC}\n";
 print "${cyan}[INFO] * You can run the installer from this script using --install or download it manually.${NC}\n";
 
@@ -100,6 +100,7 @@ chomp( my $nmcontrolled = `systemctl status NetworkManager | grep -ow running`);
 wgetchk();
 selinuxchk();
 nmcontrolledchk();
+vhostexists();
 yumgroupchk();
 hostnamechk();
 oskernelchk();
@@ -366,6 +367,27 @@ sub yumgroupchk {
         }
     }
 
+}
+
+sub vhostexists {
+    print "\n${UL}VHOST CHECK:${UE}\n";
+    my $vhostdirhttpd = '/var/www/vhosts';
+    my $vhostdirnginx = '/etc/nginx/vhosts.d';
+    if (-d $vhostdirhttpd) {
+        print "${red}[FAIL] * $vhostdirhttpd exists, there may be sites already hosted on this server\n${NC}";
+        if ( $fixit == 1 ) {
+            print "\t \\_ Verify there are no existing sites under $vhostdirhttpd\n";
+        }
+    }
+    if (-d $vhostdirnginx) {
+        print "${red}[FAIL] * $vhostdirnginx exists, there may be sites already hosted on this server\n${NC}";
+        if ( $fixit == 1 ) {
+            print "\t \\_ Verify there are no existing sites under $vhostdirnginx\n";
+        }
+    }
+    else {
+        print "${green}[PASS] * There does not appear to be any existing vhost data hosted on this server${NC}\n";
+    }
 }
 
 sub hostnamechk {
